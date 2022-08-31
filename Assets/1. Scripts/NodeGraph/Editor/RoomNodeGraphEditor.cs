@@ -1,29 +1,58 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using UnityEditor;
+using UnityEditor.Callbacks;
+using UnityEngine;
 
 public class RoomNodeGraphEditor : EditorWindow
 {
-    GUIStyle roomNodeStyle;
-    const float nodeWidth = 160f;
-    const float nodeHeight = 75f;
-    const int nodePadding = 25;
-    const int nodeBorder = 12;
+    private GUIStyle roomNodeStyle;
+    private static RoomNodeGraphSO currentRoomNodeGraph;
+    private RoomNodeTypeListSO roomNodeTypeList;
+
+    private const float nodeWidth = 160f;
+    private const float nodeHeight = 75f;
+    private const int nodePadding = 25;
+    private const int nodeBorder = 12;
 
 
-    [MenuItem("Room Node Graph Editor",menuItem ="Window/Dungeon Editor/Room Node Graph Editor")]
+    [MenuItem("Room Node Graph Editor", menuItem = "Window/Dungeon Editor/Room Node Graph Editor")]
     private static void OpenWindow()
     {
         GetWindow<RoomNodeGraphEditor>("Room Node Graph");
     }
     private void OnEnable()
     {
+        // Define node layout style.
         roomNodeStyle = new GUIStyle();
         roomNodeStyle.normal.background = EditorGUIUtility.Load("node1") as Texture2D;
         roomNodeStyle.normal.textColor = Color.white;
         roomNodeStyle.padding = new RectOffset(nodePadding, nodePadding, nodePadding, nodePadding);
         roomNodeStyle.border = new RectOffset(nodeBorder, nodeBorder, nodeBorder, nodeBorder);
+
+        // Load Room node types
+        roomNodeTypeList = GameResources.Instance.roomNodeTypeList;
+    }
+
+    /// <summary>
+    /// Open the room node graph editor window if a room node graph scriptable object asset is double clikced in the inspector.
+    /// </summary>
+    /// <param name="instanceID"></param>
+    /// <param name="line"></param>
+    /// <returns></returns>
+
+    [OnOpenAsset(0)]    //Need the namespace UnityEditor.Callbacks
+    public static bool OnDoubleClickAsset(int instanceID, int line)
+    {
+        RoomNodeGraphSO roomNodeGraph = EditorUtility.InstanceIDToObject(instanceID) as RoomNodeGraphSO;
+
+        if (roomNodeGraph != null)
+        {
+            OpenWindow();
+
+            currentRoomNodeGraph = roomNodeGraph;
+
+            return true;
+        }
+        return false;
     }
 
     /// <summary>
@@ -31,12 +60,89 @@ public class RoomNodeGraphEditor : EditorWindow
     /// </summary>
     private void OnGUI()
     {
-        GUILayout.BeginArea(new Rect(new Vector2(100f, 100f), new Vector2(nodeWidth, nodeHeight)), roomNodeStyle);
-        EditorGUILayout.LabelField("Node 1");
-        GUILayout.EndArea();
+        if(currentRoomNodeGraph!=null)
+        {
+            // Process Events
+            ProcessEvents(Event.current);
 
-        GUILayout.BeginArea(new Rect(new Vector2(300f, 300f), new Vector2(nodeWidth, nodeHeight)), roomNodeStyle);
-        EditorGUILayout.LabelField("Node 2");
-        GUILayout.EndArea();
+            // Draw Room Nodes
+            DrawRoomNodes();
+
+            if (GUI.changed)
+                Repaint();
+        }
+    }
+    /// <summary>
+    /// 노드 그래프 이벤트
+    /// </summary>
+    private void ProcessEvents(Event currentEvent)
+    {
+        switch(currentEvent.type)
+        {
+            //마우스 다운 이벤트 
+            case EventType.MouseDown:
+                ProcessMouseDownEvent(currentEvent);
+                break;
+        }
+    }
+    /// <summary>
+    /// 노드 그래프 마우스 다운 이벤트.
+    /// </summary>
+    private void ProcessMouseDownEvent(Event currentEvent)
+    {
+        //오른쪽 마우스 클릭 이벤트
+        if(currentEvent.button==1)
+        {
+            ShowContextMenu(currentEvent.mousePosition);
+        }
+    }
+    /// <summary>
+    /// Context Menu 열기
+    /// </summary>
+    private void ShowContextMenu(Vector2 mousePosition)
+    {
+        GenericMenu menu= new GenericMenu();
+        menu.AddItem(new GUIContent("Create Room Node"), false, CreateRoomNode, mousePosition);
+
+        menu.ShowAsContext();
+    }
+    /// <summary>
+    /// 마우스 위치에 노드 생성.
+    /// </summary>
+    private void CreateRoomNode(object mousePositionObject)
+    {
+        CreateRoomNode(mousePositionObject, roomNodeTypeList.list.Find(x => x.isNone));
+    }
+
+    private void CreateRoomNode(object mousePositionObject,RoomNodeTypeSO roomNodeType)
+    {
+        Vector2 mousePosition = (Vector2)mousePositionObject;
+
+        // 스크립터블 오브젝트 에셋 노드 생성.
+        RoomNodeSO roomNode = ScriptableObject.CreateInstance<RoomNodeSO>();
+
+        //현재 노드 그래프 리스트에 노드 추가.
+        currentRoomNodeGraph.roomNodeList.Add(roomNode);
+
+        // 노드 정보 입력.
+        roomNode.Initialise(new Rect(mousePosition, new Vector2(nodeWidth, nodeHeight)), currentRoomNodeGraph, roomNodeType);
+
+        //노드 그래프 스크립터블 오브젝트에 노드 추가.
+        AssetDatabase.AddObjectToAsset(roomNode, currentRoomNodeGraph);
+
+        AssetDatabase.SaveAssets();
+    }
+
+    /// <summary>
+    /// 에디터 윈도우에 노드 그리기.
+    /// </summary>
+    private void DrawRoomNodes()
+    {
+        foreach(RoomNodeSO roomNode in currentRoomNodeGraph.roomNodeList)
+        {
+            roomNode.Draw(roomNodeStyle);
+        }
+
+        GUI.changed = true;
     }
 }
