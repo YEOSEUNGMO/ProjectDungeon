@@ -16,6 +16,9 @@ public class RoomNodeSO : ScriptableObject
 #if UNITY_EDITOR
 
     [HideInInspector] public Rect rect;
+    [HideInInspector] public bool isLeftClickDragging;
+    [HideInInspector] public bool isSelected;
+
     public void Initialise(Rect _rect, RoomNodeGraphSO _nodeGraph, RoomNodeTypeSO _roomNodeType)
     {
         rect = _rect;
@@ -64,6 +67,80 @@ public class RoomNodeSO : ScriptableObject
 
         return roomArray;
     }
+
+    /// <summary>
+    /// 노드 이벤트
+    /// </summary>
+    public void ProcessEvents(Event currentEvent)
+    {
+        switch(currentEvent.type)
+        {
+            case EventType.MouseDown:
+                ProcessMouseDownEvent(currentEvent);
+                break;
+            case EventType.MouseUp:
+                ProcessMouseUpEvent(currentEvent);
+                break;
+            case EventType.MouseDrag:
+                ProcessMouseDragEvent(currentEvent);
+                break;
+        }
+    }
+
+    private void ProcessMouseDragEvent(Event currentEvent)
+    {
+        if(currentEvent.button==0)
+        {
+            ProcessLeftMouseDragEvent(currentEvent);
+        }
+    }
+
+    private void ProcessLeftMouseDragEvent(Event currentEvent)
+    {
+        isLeftClickDragging = true;
+
+        DragNode(currentEvent.delta);
+        GUI.changed = true;
+    }
+
+    private void DragNode(Vector2 delta)
+    {
+        rect.position += delta;
+        EditorUtility.SetDirty(this);
+    }
+
+    private void ProcessMouseUpEvent(Event currentEvent)
+    {
+        if(currentEvent.button==0)
+        {
+            ProcessLeftClickUpEvent();
+        }
+    }
+
+    private void ProcessLeftClickUpEvent()
+    {
+        if(isLeftClickDragging)
+        {
+            isLeftClickDragging = false;
+        }
+    }
+
+    private void ProcessMouseDownEvent(Event currentEvent)
+    {
+        if(currentEvent.button==0)
+        {
+            ProcessLeftClickDownEvent();
+        }
+    }
+
+    private void ProcessLeftClickDownEvent()
+    {
+        Selection.activeObject = this;
+
+        //노드 선택 토글.
+        isSelected = !isSelected;
+    }
+
 #endif
     #endregion
 }

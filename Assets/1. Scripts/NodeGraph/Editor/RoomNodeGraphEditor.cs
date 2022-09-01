@@ -6,6 +6,7 @@ public class RoomNodeGraphEditor : EditorWindow
 {
     private GUIStyle roomNodeStyle;
     private static RoomNodeGraphSO currentRoomNodeGraph;
+    private RoomNodeSO currentRoomNode = null;
     private RoomNodeTypeListSO roomNodeTypeList;
 
     private const float nodeWidth = 160f;
@@ -77,13 +78,36 @@ public class RoomNodeGraphEditor : EditorWindow
     /// </summary>
     private void ProcessEvents(Event currentEvent)
     {
-        switch(currentEvent.type)
+        if (currentRoomNode == null || currentRoomNode.isLeftClickDragging == false)
         {
-            //마우스 다운 이벤트 
-            case EventType.MouseDown:
-                ProcessMouseDownEvent(currentEvent);
-                break;
+            currentRoomNode = IsMouseOverRoomNode(currentEvent);
         }
+
+        //노드에 마우스 오버 되지 않았을 경우.
+        if(currentRoomNode==null)
+        {
+            ProcessMouseDownEvent(currentEvent);
+        }
+        else
+        {
+            currentRoomNode.ProcessEvents(currentEvent);
+        }
+
+    }
+
+    /// <summary>
+    /// 노드 마우스 오버 체크.
+    /// </summary>
+    private RoomNodeSO IsMouseOverRoomNode(Event currentEvent)
+    {
+        for(int i=currentRoomNodeGraph.roomNodeList.Count-1;i>=0;i--)
+        {
+            if(currentRoomNodeGraph.roomNodeList[i].rect.Contains(currentEvent.mousePosition))
+            {
+                return currentRoomNodeGraph.roomNodeList[i];
+            }
+        }
+        return null;
     }
     /// <summary>
     /// 노드 그래프 마우스 다운 이벤트.
