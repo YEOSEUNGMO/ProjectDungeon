@@ -53,6 +53,26 @@ public class RoomNodeSO : ScriptableObject
             int selection = EditorGUILayout.Popup("", selected, GetRoomNodeTypeToDisplay());
 
             roomNodeType = roomNodeTypeList.list[selection];
+
+            //현재 노드의 선택된 방 타입의 타입에 따라 연결된 자식,부모 노드 연결 삭제.
+            if (roomNodeTypeList.list[selected].isCorridor && !roomNodeTypeList.list[selection].isCorridor || !roomNodeTypeList.list[selected].isCorridor &&
+                roomNodeTypeList.list[selection].isCorridor || !roomNodeTypeList.list[selected].isBossRoom && roomNodeTypeList.list[selection].isBossRoom)
+            {
+                if (childRoomNodeIDList.Count > 0)
+                {
+                    for (int i = childRoomNodeIDList.Count - 1; i >= 0; i--)
+                    {
+                        RoomNodeSO childRoomNode = roomNodeGraph.GetRoomNode(childRoomNodeIDList[i]);
+
+                        if (childRoomNode != null)
+                        {
+                            RemoveChildRoomNodeIDFromRoomNode(childRoomNode.id);
+
+                            childRoomNode.RemoveParentRoomNodeIDFromRoomNode(id);
+                        }
+                    }
+                }
+            }
         }
 
 
@@ -239,10 +259,39 @@ public class RoomNodeSO : ScriptableObject
         return true;
     }
 
+    /// <summary>
+    /// 부모 노드 추가
+    /// </summary>
     public bool AddParentRoomNodeIDToRoomNode(string parentID)
     {
         parentRoomNodeIDList.Add(parentID);
         return true;
+    }
+
+    /// <summary>
+    /// 자식 노드 삭제
+    /// </summary>
+    public bool RemoveChildRoomNodeIDFromRoomNode(string childID)
+    {
+        if (childRoomNodeIDList.Contains(childID))
+        {
+            childRoomNodeIDList.Remove(childID);
+            return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// 부모 노드 삭제
+    /// </summary>
+    public bool RemoveParentRoomNodeIDFromRoomNode(string parentID)
+    {
+        if(parentRoomNodeIDList.Contains(parentID))
+        {
+            parentRoomNodeIDList.Remove(parentID);
+            return true;
+        }
+        return false;
     }
 #endif
     #endregion

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEngine;
@@ -20,7 +21,7 @@ public class RoomNodeGraphEditor : EditorWindow
     //Connecting line values
     private const float connectingLineWidth = 3f;
     private const float connectingLineArrowSize = 6f;
-    
+
 
 
     [MenuItem("Room Node Graph Editor", menuItem = "Window/Dungeon Editor/Room Node Graph Editor")]
@@ -79,7 +80,7 @@ public class RoomNodeGraphEditor : EditorWindow
     /// </summary>
     private void OnGUI()
     {
-        if(currentRoomNodeGraph!=null)
+        if (currentRoomNodeGraph != null)
         {
             //현재 드래그 중이라면 라인 그리기
             DrawDraggedLine();
@@ -99,7 +100,7 @@ public class RoomNodeGraphEditor : EditorWindow
 
     private void DrawDraggedLine()
     {
-        if(currentRoomNodeGraph.linePosition!=Vector2.zero)
+        if (currentRoomNodeGraph.linePosition != Vector2.zero)
         {
             //노드로 부터 라인 그리기
             Handles.DrawBezier(currentRoomNodeGraph.roomNodeToDrawLineFrom.rect.center, currentRoomNodeGraph.linePosition,
@@ -118,7 +119,7 @@ public class RoomNodeGraphEditor : EditorWindow
         }
 
         //노드에 마우스 오버 되지 않았을 경우. 또는 노드에서 라인을 드래그 하고있는 경우.
-        if(currentRoomNode==null || currentRoomNodeGraph.roomNodeToDrawLineFrom!=null)
+        if (currentRoomNode == null || currentRoomNodeGraph.roomNodeToDrawLineFrom != null)
         {
             ProcessRoomNodeGraphEvents(currentEvent);
         }
@@ -135,9 +136,9 @@ public class RoomNodeGraphEditor : EditorWindow
     /// </summary>
     private RoomNodeSO IsMouseOverRoomNode(Event currentEvent)
     {
-        for(int i=currentRoomNodeGraph.roomNodeList.Count-1;i>=0;i--)
+        for (int i = currentRoomNodeGraph.roomNodeList.Count - 1; i >= 0; i--)
         {
-            if(currentRoomNodeGraph.roomNodeList[i].rect.Contains(currentEvent.mousePosition))
+            if (currentRoomNodeGraph.roomNodeList[i].rect.Contains(currentEvent.mousePosition))
             {
                 return currentRoomNodeGraph.roomNodeList[i];
             }
@@ -147,7 +148,7 @@ public class RoomNodeGraphEditor : EditorWindow
 
     private void ProcessRoomNodeGraphEvents(Event currentEvet)
     {
-        switch(currentEvet.type)
+        switch (currentEvet.type)
         {
             case EventType.MouseDown:
                 ProcessMouseDownEvent(currentEvet);
@@ -166,14 +167,14 @@ public class RoomNodeGraphEditor : EditorWindow
     private void ProcessMouseUpEvent(Event currentEvet)
     {
         //현재 라인을 그리는 도중에 오른쪽 마우스를 뗏을경우.
-        if(currentEvet.button==1&&currentRoomNodeGraph.roomNodeToDrawLineFrom!=null)
+        if (currentEvet.button == 1 && currentRoomNodeGraph.roomNodeToDrawLineFrom != null)
         {
             //현재 노드 위에 마우스가 올라가있는 경우.
             RoomNodeSO roomNode = IsMouseOverRoomNode(currentEvet);
 
-            if(roomNode!=null)
+            if (roomNode != null)
             {
-                if(currentRoomNodeGraph.roomNodeToDrawLineFrom.AddChildRoomNodeIDToRoomNode(roomNode.id))
+                if (currentRoomNodeGraph.roomNodeToDrawLineFrom.AddChildRoomNodeIDToRoomNode(roomNode.id))
                 {
                     roomNode.AddParentRoomNodeIDToRoomNode(currentRoomNodeGraph.roomNodeToDrawLineFrom.id);
                 }
@@ -196,15 +197,15 @@ public class RoomNodeGraphEditor : EditorWindow
     private void DrawRoomConnections()
     {
         //모든 노드 탐색
-        foreach(RoomNodeSO roomNode in currentRoomNodeGraph.roomNodeList)
+        foreach (RoomNodeSO roomNode in currentRoomNodeGraph.roomNodeList)
         {
             //자식 노드들이 있는지 확인.
-            if(roomNode.childRoomNodeIDList.Count>0)
+            if (roomNode.childRoomNodeIDList.Count > 0)
             {
                 //모든 자식 노드 탐색.
-                foreach(string childRoomNodeID in roomNode.childRoomNodeIDList)
+                foreach (string childRoomNodeID in roomNode.childRoomNodeIDList)
                 {
-                    if(currentRoomNodeGraph.roomNodeDictionary.ContainsKey(childRoomNodeID))
+                    if (currentRoomNodeGraph.roomNodeDictionary.ContainsKey(childRoomNodeID))
                     {
                         DrawConnectionLine(roomNode, currentRoomNodeGraph.roomNodeDictionary[childRoomNodeID]);
 
@@ -248,7 +249,7 @@ public class RoomNodeGraphEditor : EditorWindow
     private void ProcessMouseDragEvent(Event currentEvet)
     {
         //오른쪽 마우스 드래그 이벤트 - 라인 그리기.
-        if(currentEvet.button==1)
+        if (currentEvet.button == 1)
         {
             ProcessRightMouseDragEvent(currentEvet);
         }
@@ -259,7 +260,7 @@ public class RoomNodeGraphEditor : EditorWindow
     /// </summary>
     private void ProcessRightMouseDragEvent(Event currentEvet)
     {
-        if(currentRoomNodeGraph.roomNodeToDrawLineFrom!=null)
+        if (currentRoomNodeGraph.roomNodeToDrawLineFrom != null)
         {
             DragConnectingLine(currentEvet.delta);
             GUI.changed = true;
@@ -281,7 +282,7 @@ public class RoomNodeGraphEditor : EditorWindow
         {
             ShowContextMenu(currentEvent.mousePosition);
         }
-        else if (currentEvent.button == 0) 
+        else if (currentEvent.button == 0)
         {
             ClearLineDrag();
             ClearAllSelectedRoomNodes();
@@ -293,8 +294,13 @@ public class RoomNodeGraphEditor : EditorWindow
     /// </summary>
     private void ShowContextMenu(Vector2 mousePosition)
     {
-        GenericMenu menu= new GenericMenu();
+        GenericMenu menu = new GenericMenu();
         menu.AddItem(new GUIContent("Create Room Node"), false, CreateRoomNode, mousePosition);
+        menu.AddSeparator("");
+        menu.AddItem(new GUIContent("Select All Room Nodes"), false, SelectAllRoomNods);
+        menu.AddSeparator("");
+        menu.AddItem(new GUIContent("Delete Selected Room Node Links"), false, DeleteSelectedRoomNodeLinks);
+        menu.AddItem(new GUIContent("Delete Selected Room Node"), false, DeleteSelectedRoomNodes);
 
         menu.ShowAsContext();
     }
@@ -303,7 +309,7 @@ public class RoomNodeGraphEditor : EditorWindow
     /// </summary>
     private void CreateRoomNode(object mousePositionObject)
     {
-        if(currentRoomNodeGraph.roomNodeList.Count==0)
+        if (currentRoomNodeGraph.roomNodeList.Count == 0)
         {
             CreateRoomNode(new Vector2(200, 200), roomNodeTypeList.list.Find(x => x.isEntrance));
         }
@@ -311,7 +317,7 @@ public class RoomNodeGraphEditor : EditorWindow
         CreateRoomNode(mousePositionObject, roomNodeTypeList.list.Find(x => x.isNone));
     }
 
-    private void CreateRoomNode(object mousePositionObject,RoomNodeTypeSO roomNodeType)
+    private void CreateRoomNode(object mousePositionObject, RoomNodeTypeSO roomNodeType)
     {
         Vector2 mousePosition = (Vector2)mousePositionObject;
 
@@ -332,11 +338,102 @@ public class RoomNodeGraphEditor : EditorWindow
         //딕셔너리 리프레시.
         currentRoomNodeGraph.OnValidate();
     }
-    private void ClearAllSelectedRoomNodes()
+
+    /// <summary>
+    /// 선택된 노드 삭제.
+    /// </summary>
+    private void DeleteSelectedRoomNodes()
     {
+        Queue<RoomNodeSO> roomNodeDeletionQueue = new Queue<RoomNodeSO>();
+
         foreach(RoomNodeSO roomNode in currentRoomNodeGraph.roomNodeList)
         {
-            if(roomNode.isSelected)
+            //선택된 노드 찾기.
+            if(roomNode.isSelected && !roomNode.roomNodeType.isEntrance)
+            {
+                roomNodeDeletionQueue.Enqueue(roomNode);
+
+                //선택된 노드의 자식 노드 검색.
+                foreach(string childRoomNodeID in roomNode.childRoomNodeIDList)
+                {
+                    RoomNodeSO childRoomNode = currentRoomNodeGraph.GetRoomNode(childRoomNodeID);
+
+                    if(childRoomNode!=null)
+                    {
+                        //자식 노드와 연결 끊기.
+                        childRoomNode.RemoveParentRoomNodeIDFromRoomNode(roomNode.id);
+                    }
+                }
+
+                //선택된 노드의 부모 노드 검색
+                foreach(string parentRoomNodeID in roomNode.parentRoomNodeIDList)
+                {
+                    RoomNodeSO parentRoomNode = currentRoomNodeGraph.GetRoomNode(parentRoomNodeID);
+
+                    if (parentRoomNode != null)
+                    {
+                        //부모 노드와 연결 끊기.
+                        parentRoomNode.RemoveParentRoomNodeIDFromRoomNode(roomNode.id);
+                    }
+                }
+            }
+        }
+
+        while(roomNodeDeletionQueue.Count > 0)
+        {
+            //삭제 할 노드 꺼내기.
+            RoomNodeSO roomNodeToDelete = roomNodeDeletionQueue.Dequeue();
+
+            //노드 딕셔너리에서 데이터 삭제.
+            currentRoomNodeGraph.roomNodeDictionary.Remove(roomNodeToDelete.id);
+
+            //노드 리스트에서 데이터 삭제.
+            currentRoomNodeGraph.roomNodeList.Remove(roomNodeToDelete);
+
+            //Asset database에서 삭제.
+            DestroyImmediate(roomNodeToDelete, true);
+
+            AssetDatabase.SaveAssets();
+        }
+    }
+
+    /// <summary>
+    /// 선택된 노드 간의 연결 끊기.
+    /// </summary>
+    private void DeleteSelectedRoomNodeLinks()
+    {
+        //모든 노드 탐색
+        foreach (RoomNodeSO roomNode in currentRoomNodeGraph.roomNodeList)
+        {
+            //해당 노드가 선택되어있고 연결된 자식 노드가 있을경우.
+            if (roomNode.isSelected && roomNode.childRoomNodeIDList.Count > 0)
+            {
+                for (int i = roomNode.childRoomNodeIDList.Count - 1; i >= 0; i--)
+                {
+                    RoomNodeSO childRoomNode = currentRoomNodeGraph.GetRoomNode(roomNode.childRoomNodeIDList[i]);
+
+                    //자식 노드도 선태된 상태라면.
+                    if (childRoomNode != null && childRoomNode.isSelected)
+                    {
+                        //선택된 현재 노드의 자식 노드 지우기
+                        roomNode.RemoveChildRoomNodeIDFromRoomNode(childRoomNode.id);
+
+                        //자식 노드의 부모 노드(선택된 노드) 지우기.
+                        childRoomNode.RemoveParentRoomNodeIDFromRoomNode(roomNode.id);
+                    }
+                }
+            }
+        }
+
+        //모든 선택 취소.
+        ClearAllSelectedRoomNodes();
+    }
+
+    private void ClearAllSelectedRoomNodes()
+    {
+        foreach (RoomNodeSO roomNode in currentRoomNodeGraph.roomNodeList)
+        {
+            if (roomNode.isSelected)
             {
                 roomNode.isSelected = false;
 
@@ -345,12 +442,21 @@ public class RoomNodeGraphEditor : EditorWindow
         }
     }
 
+    private void SelectAllRoomNods()
+    {
+        foreach (RoomNodeSO roomNode in currentRoomNodeGraph.roomNodeList)
+        {
+            roomNode.isSelected = true;
+        }
+        GUI.changed = true;
+    }
+
     /// <summary>
     /// 에디터 윈도우에 노드 그리기.
     /// </summary>
     private void DrawRoomNodes()
     {
-        foreach(RoomNodeSO roomNode in currentRoomNodeGraph.roomNodeList)
+        foreach (RoomNodeSO roomNode in currentRoomNodeGraph.roomNodeList)
         {
             if (roomNode.isSelected)
             {
@@ -368,8 +474,8 @@ public class RoomNodeGraphEditor : EditorWindow
     private void InspectorSelectionChanged()
     {
         RoomNodeGraphSO roomNodeGraph = Selection.activeObject as RoomNodeGraphSO;
-        
-        if(roomNodeGraph != null)
+
+        if (roomNodeGraph != null)
         {
             currentRoomNodeGraph = roomNodeGraph;
             GUI.changed = true;
