@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class RoomNodeSO : ScriptableObject
 {
-    [HideInInspector] public string id;
-    [HideInInspector] public List<string> parentRoomNodeIDList = new List<string>();
-    [HideInInspector] public List<string> childRoomNodeIDList = new List<string>();
+    public string id;
+    public List<string> parentRoomNodeIDList = new List<string>();
+    public List<string> childRoomNodeIDList = new List<string>();
     [HideInInspector] public RoomNodeGraphSO roomNodeGraph;
     public RoomNodeTypeSO roomNodeType;
     [HideInInspector] public RoomNodeTypeListSO roomNodeTypeList;
@@ -103,11 +103,6 @@ public class RoomNodeSO : ScriptableObject
         GUI.changed = true;
     }
 
-    private void DragNode(Vector2 delta)
-    {
-        rect.position += delta;
-        EditorUtility.SetDirty(this);
-    }
 
     private void ProcessMouseUpEvent(Event currentEvent)
     {
@@ -127,9 +122,16 @@ public class RoomNodeSO : ScriptableObject
 
     private void ProcessMouseDownEvent(Event currentEvent)
     {
+        //mouse left down
         if(currentEvent.button==0)
         {
             ProcessLeftClickDownEvent();
+        }
+
+        //mouse right down
+        if(currentEvent.button==1)
+        {
+            ProcessRightClickDownEvent(currentEvent);
         }
     }
 
@@ -140,7 +142,35 @@ public class RoomNodeSO : ScriptableObject
         //노드 선택 토글.
         isSelected = !isSelected;
     }
+    private void ProcessRightClickDownEvent(Event currentEvent)
+    {
+        roomNodeGraph.SetNodeToDrawConnectionLineFrom(this, currentEvent.mousePosition);
+    }
 
+    /// <summary>
+    /// 노드 드래그(위치 이동)
+    /// </summary>
+    private void DragNode(Vector2 delta)
+    {
+        rect.position += delta;
+        EditorUtility.SetDirty(this);
+    }
+
+    /// <summary>
+    /// 노드에 자식 ID 추가하기.
+    /// </summary>
+    /// <returns></returns>
+    public bool AddChildRoomNodeIDToRoomNode(string childID)
+    {
+        childRoomNodeIDList.Add(childID);
+        return true;
+    }
+
+    public bool AddParentRoomNodeIDToRoomNode(string parentID)
+    {
+        parentRoomNodeIDList.Add(parentID);
+        return true;
+    }
 #endif
     #endregion
 }
