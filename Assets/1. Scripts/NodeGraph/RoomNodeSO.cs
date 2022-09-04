@@ -179,7 +179,7 @@ public class RoomNodeSO : ScriptableObject
     /// <summary>
     /// 노드 드래그(위치 이동)
     /// </summary>
-    private void DragNode(Vector2 delta)
+    public void DragNode(Vector2 delta)
     {
         rect.position += delta;
         EditorUtility.SetDirty(this);
@@ -293,6 +293,7 @@ public class RoomNodeSO : ScriptableObject
         }
         return false;
     }
+
 #endif
     #endregion
 }

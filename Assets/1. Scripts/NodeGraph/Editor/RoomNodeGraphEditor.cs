@@ -9,6 +9,10 @@ public class RoomNodeGraphEditor : EditorWindow
     private GUIStyle roomNodeStyle;
     private GUIStyle roomNodeSelectedStyle;
     private static RoomNodeGraphSO currentRoomNodeGraph;
+
+    private Vector2 graphOffset;
+    private Vector2 graphDrag;
+
     private RoomNodeSO currentRoomNode = null;
     private RoomNodeTypeListSO roomNodeTypeList;
 
@@ -21,6 +25,10 @@ public class RoomNodeGraphEditor : EditorWindow
     //Connecting line values
     private const float connectingLineWidth = 3f;
     private const float connectingLineArrowSize = 6f;
+
+    //Grid Spacing
+    private const float gridLarge = 100f;
+    private const float gridSmall = 25f;
 
 
 
@@ -82,6 +90,9 @@ public class RoomNodeGraphEditor : EditorWindow
     {
         if (currentRoomNodeGraph != null)
         {
+            //그리드 그리기.
+            DrawBackgroundGrid(gridSmall, 0.2f, Color.gray);
+            DrawBackgroundGrid(gridLarge, 0.3f, Color.gray);
             //현재 드래그 중이라면 라인 그리기
             DrawDraggedLine();
 
@@ -96,6 +107,31 @@ public class RoomNodeGraphEditor : EditorWindow
             if (GUI.changed)
                 Repaint();
         }
+    }
+
+    private void DrawBackgroundGrid(float gridSize, float gridOpacity, Color gridColor)
+    {
+        int verticalLineCount = Mathf.CeilToInt((position.width + gridSize) / gridSize); // CeilToInt : int형으로 올림.
+        int horizontalLineCount= Mathf.CeilToInt((position.height+ gridSize) / gridSize);
+
+        Handles.color = new Color(gridColor.r, gridColor.g, gridColor.b, gridOpacity);
+
+        graphOffset += graphDrag * 0.5f;
+
+        Vector3 gridOffset = new Vector3(graphOffset.x % gridSize, graphOffset.y % gridSize, 0);
+        //세로선 그리기.
+        for(int i=0;i<verticalLineCount;i++)
+        {
+            Handles.DrawLine(new Vector3(gridSize * i, -gridSize, 0) + gridOffset, new Vector3(gridSize * i, position.height + gridSize, 0f) + gridOffset);
+        }
+
+        //가로선 그리기
+        for(int i=0;i<horizontalLineCount;i++)
+        {
+            Handles.DrawLine(new Vector3(-gridSize, gridSize * i, 0) + gridOffset, new Vector3(position.width + gridSize, gridSize * i, 0f) + gridOffset);
+        }
+
+        Handles.color = Color.white;
     }
 
     private void DrawDraggedLine()
@@ -113,6 +149,9 @@ public class RoomNodeGraphEditor : EditorWindow
     /// </summary>
     private void ProcessEvents(Event currentEvent)
     {
+        //그래프 드래그 초기화.
+        graphDrag = Vector2.zero;
+        
         if (currentRoomNode == null || currentRoomNode.isLeftClickDragging == false)
         {
             currentRoomNode = IsMouseOverRoomNode(currentEvent);
@@ -253,6 +292,28 @@ public class RoomNodeGraphEditor : EditorWindow
         {
             ProcessRightMouseDragEvent(currentEvet);
         }
+        //왼쪽 마우스 드래그 이벤트 - 그래프 드래그하기.
+        if (currentEvet.button == 0)
+        {
+            ProcessLeftMouseDragEvent(currentEvet.delta);
+        }
+
+    }
+
+    /// <summary>
+    /// 왼쪽 마우스 드래그 - 노드 그래프 드래그
+    /// </summary>
+    private void ProcessLeftMouseDragEvent(Vector2 dragDelta)
+    {
+        graphDrag = dragDelta;
+
+        //모든 노드 드래그.
+        for(int i=0;i<currentRoomNodeGraph.roomNodeList.Count;i++)
+        {
+            currentRoomNodeGraph.roomNodeList[i].DragNode(dragDelta);
+        }
+
+        GUI.changed=true;
     }
 
     /// <summary>
