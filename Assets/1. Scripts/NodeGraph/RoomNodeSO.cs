@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class RoomNodeSO : ScriptableObject
 {
-    public string id;
-    public List<string> parentRoomNodeIDList = new List<string>();
-    public List<string> childRoomNodeIDList = new List<string>();
+    [HideInInspector] public string id;
+    [HideInInspector] public List<string> parentRoomNodeIDList = new List<string>();
+    [HideInInspector] public List<string> childRoomNodeIDList = new List<string>();
     [HideInInspector] public RoomNodeGraphSO roomNodeGraph;
     public RoomNodeTypeSO roomNodeType;
     [HideInInspector] public RoomNodeTypeListSO roomNodeTypeList;
@@ -42,7 +42,7 @@ public class RoomNodeSO : ScriptableObject
         EditorGUI.BeginChangeCheck();
 
         //부모 노드가 있거나 노드 타입이 entrance 일 경우, 라벨만 표시하기.
-        if(parentRoomNodeIDList.Count>0 || roomNodeType.isEntrance)
+        if (parentRoomNodeIDList.Count > 0 || roomNodeType.isEntrance)
         {
             EditorGUILayout.LabelField(roomNodeType.roomNodeTypeName);
         }
@@ -66,9 +66,9 @@ public class RoomNodeSO : ScriptableObject
     {
         string[] roomArray = new string[roomNodeTypeList.list.Count];
 
-        for(int i=0;i<roomNodeTypeList.list.Count;i++)
+        for (int i = 0; i < roomNodeTypeList.list.Count; i++)
         {
-            if(roomNodeTypeList.list[i].displayInNodeGraphEdtior)
+            if (roomNodeTypeList.list[i].displayInNodeGraphEdtior)
             {
                 roomArray[i] = roomNodeTypeList.list[i].roomNodeTypeName;
             }
@@ -82,7 +82,7 @@ public class RoomNodeSO : ScriptableObject
     /// </summary>
     public void ProcessEvents(Event currentEvent)
     {
-        switch(currentEvent.type)
+        switch (currentEvent.type)
         {
             case EventType.MouseDown:
                 ProcessMouseDownEvent(currentEvent);
@@ -98,7 +98,7 @@ public class RoomNodeSO : ScriptableObject
 
     private void ProcessMouseDragEvent(Event currentEvent)
     {
-        if(currentEvent.button==0)
+        if (currentEvent.button == 0)
         {
             ProcessLeftMouseDragEvent(currentEvent);
         }
@@ -115,7 +115,7 @@ public class RoomNodeSO : ScriptableObject
 
     private void ProcessMouseUpEvent(Event currentEvent)
     {
-        if(currentEvent.button==0)
+        if (currentEvent.button == 0)
         {
             ProcessLeftClickUpEvent();
         }
@@ -123,7 +123,7 @@ public class RoomNodeSO : ScriptableObject
 
     private void ProcessLeftClickUpEvent()
     {
-        if(isLeftClickDragging)
+        if (isLeftClickDragging)
         {
             isLeftClickDragging = false;
         }
@@ -132,13 +132,13 @@ public class RoomNodeSO : ScriptableObject
     private void ProcessMouseDownEvent(Event currentEvent)
     {
         //mouse left down
-        if(currentEvent.button==0)
+        if (currentEvent.button == 0)
         {
             ProcessLeftClickDownEvent();
         }
 
         //mouse right down
-        if(currentEvent.button==1)
+        if (currentEvent.button == 1)
         {
             ProcessRightClickDownEvent(currentEvent);
         }
@@ -171,7 +171,71 @@ public class RoomNodeSO : ScriptableObject
     /// <returns></returns>
     public bool AddChildRoomNodeIDToRoomNode(string childID)
     {
-        childRoomNodeIDList.Add(childID);
+        if (IsChildRoomValid(childID))
+        {
+            childRoomNodeIDList.Add(childID);
+            return true;
+        }
+        return false;
+    }
+
+    private bool IsChildRoomValid(string childID)
+    {
+        bool isConnectedBossNodeAlready = false;
+
+        //노드 그래프 내에서 보스 방과 연결된 방이 있는지 유무 확인.
+        foreach (RoomNodeSO roomNode in roomNodeGraph.roomNodeList)
+        {
+            if(roomNode.roomNodeType.isBossRoom && roomNode.parentRoomNodeIDList.Count>0)
+            {
+                isConnectedBossNodeAlready = true;
+            }
+        }
+
+        //내 자식 노드가 보스 방이고 보스 방이 이미 연결이 되어있을경우.
+        if (roomNodeGraph.GetRoomNode(childID).roomNodeType.isBossRoom && isConnectedBossNodeAlready)
+            return false;
+
+        //자식 노드의 타입이 None 일 경우.
+        if (roomNodeGraph.GetRoomNode(childID).roomNodeType.isNone)
+            return false;
+
+        //내 자식 노드에 이미 포함되어있을 경우.
+        if (childRoomNodeIDList.Contains(childID))
+            return false;
+
+        //내 ID 와 자식 노드 ID 가 같을 경우
+        if (id == childID)
+            return false;
+
+        //이미 나의 부모 노드일 경우.
+        if (parentRoomNodeIDList.Contains(childID))
+            return false;
+
+        //자식노드에 이미 부모가 있을 경우.
+        if (roomNodeGraph.GetRoomNode(childID).parentRoomNodeIDList.Count > 0)
+            return false;
+
+        //자식 노드의 타입과 나의 노드 타입이 둘다 Corridor 일 경우. (연결 될 대상 둘다 Corridor 이면 안됨)
+        if (roomNodeGraph.GetRoomNode(childID).roomNodeType.isCorridor && roomNodeType.isCorridor)
+            return false;
+
+        //자식 노드의 입과 나의 노드 타입이 둘다 Corridor 가 아닐 경우. (연결 될 대상 둘다 Corridor 가 아니면 안됨)
+        if (!roomNodeGraph.GetRoomNode(childID).roomNodeType.isCorridor && !roomNodeType.isCorridor)
+            return false;
+
+        //자식 노드의 타입이 Corridor 인데 나의 자식 노드 개수가 맥스일 경우.
+        if (roomNodeGraph.GetRoomNode(childID).roomNodeType.isCorridor && childRoomNodeIDList.Count >= Settings.maxChildCorridors)
+            return false;
+
+        //자식 노드의 타입이 Entrance 일 경우. Entrance는 항상 최상의 레벨의 부모여야 한다.
+        if (roomNodeGraph.GetRoomNode(childID).roomNodeType.isEntrance)
+            return false;
+
+        //자식 노드의 타입이 Corridor가 아닌데 나에게 이미 다른 자식 노드가 연결 되어있을 경우.
+        if (!roomNodeGraph.GetRoomNode(childID).roomNodeType.isCorridor && childRoomNodeIDList.Count > 0)
+            return false;
+
         return true;
     }
 
