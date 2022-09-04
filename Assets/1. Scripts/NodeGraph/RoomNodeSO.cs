@@ -41,11 +41,20 @@ public class RoomNodeSO : ScriptableObject
 
         EditorGUI.BeginChangeCheck();
 
-        int selected = roomNodeTypeList.list.FindIndex(x => x == roomNodeType);
+        //부모 노드가 있거나 노드 타입이 entrance 일 경우, 라벨만 표시하기.
+        if(parentRoomNodeIDList.Count>0 || roomNodeType.isEntrance)
+        {
+            EditorGUILayout.LabelField(roomNodeType.roomNodeTypeName);
+        }
+        else
+        {
+            int selected = roomNodeTypeList.list.FindIndex(x => x == roomNodeType);
 
-        int selection = EditorGUILayout.Popup("", selected, GetRoomNodeTypeToDisplay());
+            int selection = EditorGUILayout.Popup("", selected, GetRoomNodeTypeToDisplay());
 
-        roomNodeType = roomNodeTypeList.list[selection];
+            roomNodeType = roomNodeTypeList.list[selection];
+        }
+
 
         if (EditorGUI.EndChangeCheck())
             EditorUtility.SetDirty(this);
