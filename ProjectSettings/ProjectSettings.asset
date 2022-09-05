@@ -553,12 +553,8 @@ PlayerSettings:
   scriptingDefineSymbols: {}
   additionalCompilerArguments: {}
   platformArchitecture: {}
-<<<<<<< HEAD
   scriptingBackend:
     Standalone: 1
-=======
-  scriptingBackend: {}
->>>>>>> 0d98aa3218ca2f36c2eed2cef3ead2ae83755b00
   il2cppCompilerConfiguration: {}
   managedStrippingLevel: {}
   incrementalIl2cppBuild: {}
@@ -571,12 +567,8 @@ PlayerSettings:
   gcIncremental: 1
   assemblyVersionValidation: 1
   gcWBarrierValidation: 0
-<<<<<<< HEAD
   apiCompatibilityLevelPerPlatform:
     Standalone: 3
-=======
-  apiCompatibilityLevelPerPlatform: {}
->>>>>>> 0d98aa3218ca2f36c2eed2cef3ead2ae83755b00
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
   metroPackageName: 2DBuiltInRenderer

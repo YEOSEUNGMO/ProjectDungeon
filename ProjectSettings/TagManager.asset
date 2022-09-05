@@ -3,7 +3,6 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-<<<<<<< HEAD
   tags:
   - grid
   - collisionTilemap
@@ -15,9 +14,6 @@ TagManager:
   - roomTilemap
   - miniMapPlayer
   - playerWeapon
-=======
-  tags: []
->>>>>>> 0d98aa3218ca2f36c2eed2cef3ead2ae83755b00
   layers:
   - Default
   - TransparentFX
@@ -26,7 +22,6 @@ TagManager:
   - Water
   - UI
   - 
-<<<<<<< HEAD
   - IgnoreAmmo
   - Camera 1
   - Camera 2
@@ -41,22 +36,6 @@ TagManager:
   - PlayerWeapon
   - EnemyWeapon
   - Camera 3
-=======
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
->>>>>>> 0d98aa3218ca2f36c2eed2cef3ead2ae83755b00
   - 
   - 
   - 
@@ -72,7 +51,6 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-<<<<<<< HEAD
   - name: Ground
     uniqueID: 3504611765
     locked: 0
@@ -94,5 +72,3 @@ TagManager:
   - name: Minimap
     uniqueID: 1491282665
     locked: 0
-=======
->>>>>>> 0d98aa3218ca2f36c2eed2cef3ead2ae83755b00
