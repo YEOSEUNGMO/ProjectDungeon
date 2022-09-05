@@ -22,6 +22,20 @@ TagManager:
   - Water
   - UI
   - 
+  - IgnoreAmmo
+  - Camera 1
+  - Camera 2
+  - Player
+  - MiniMap
+  - Room
+  - Wall
+  - PlayerAmmo
+  - Enemy
+  - EnemyAmmo
+  - Environment
+  - PlayerWeapon
+  - EnemyWeapon
+  - Camera 3
   - 
   - 
   - 
