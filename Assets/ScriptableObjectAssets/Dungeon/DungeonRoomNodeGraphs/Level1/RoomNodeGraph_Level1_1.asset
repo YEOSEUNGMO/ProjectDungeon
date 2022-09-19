@@ -23,8 +23,8 @@ MonoBehaviour:
   roomNodeTypeList: {fileID: 11400000, guid: 00b8f90c2eae28d4394bf3daddd7bd91, type: 2}
   rect:
     serializedVersion: 2
-    x: 643
-    y: 207
+    x: 172
+    y: 385
     width: 160
     height: 75
   isLeftClickDragging: 0
@@ -50,6 +50,8 @@ MonoBehaviour:
   roomNodeTypeList: {fileID: 11400000, guid: 00b8f90c2eae28d4394bf3daddd7bd91, type: 2}
   rect:
     serializedVersion: 2
+    x: 167
+    y: 200
     width: 160
     height: 75
   isLeftClickDragging: 0
@@ -75,6 +77,8 @@ MonoBehaviour:
   roomNodeTypeList: {fileID: 11400000, guid: 00b8f90c2eae28d4394bf3daddd7bd91, type: 2}
   rect:
     serializedVersion: 2
+    x: -235
+    y: 200
     width: 160
     height: 75
   isLeftClickDragging: 0
@@ -101,6 +105,8 @@ MonoBehaviour:
   roomNodeTypeList: {fileID: 11400000, guid: 00b8f90c2eae28d4394bf3daddd7bd91, type: 2}
   rect:
     serializedVersion: 2
+    x: -30
+    y: 384
     width: 160
     height: 75
   isLeftClickDragging: 0
@@ -127,6 +133,8 @@ MonoBehaviour:
   roomNodeTypeList: {fileID: 11400000, guid: 00b8f90c2eae28d4394bf3daddd7bd91, type: 2}
   rect:
     serializedVersion: 2
+    x: 374
+    y: 387
     width: 160
     height: 75
   isLeftClickDragging: 0
@@ -153,6 +161,8 @@ MonoBehaviour:
   roomNodeTypeList: {fileID: 11400000, guid: 00b8f90c2eae28d4394bf3daddd7bd91, type: 2}
   rect:
     serializedVersion: 2
+    x: -230
+    y: 371
     width: 160
     height: 75
   isLeftClickDragging: 0
@@ -179,6 +189,8 @@ MonoBehaviour:
   roomNodeTypeList: {fileID: 11400000, guid: 00b8f90c2eae28d4394bf3daddd7bd91, type: 2}
   rect:
     serializedVersion: 2
+    x: 575
+    y: 205
     width: 160
     height: 75
   isLeftClickDragging: 0
@@ -204,6 +216,8 @@ MonoBehaviour:
   roomNodeTypeList: {fileID: 11400000, guid: 00b8f90c2eae28d4394bf3daddd7bd91, type: 2}
   rect:
     serializedVersion: 2
+    x: -228
+    y: 548
     width: 160
     height: 75
   isLeftClickDragging: 0
@@ -230,6 +244,8 @@ MonoBehaviour:
   roomNodeTypeList: {fileID: 11400000, guid: 00b8f90c2eae28d4394bf3daddd7bd91, type: 2}
   rect:
     serializedVersion: 2
+    x: -230
+    y: 461
     width: 160
     height: 75
   isLeftClickDragging: 0
@@ -257,6 +273,8 @@ MonoBehaviour:
   roomNodeTypeList: {fileID: 11400000, guid: 00b8f90c2eae28d4394bf3daddd7bd91, type: 2}
   rect:
     serializedVersion: 2
+    x: -28
+    y: 288
     width: 160
     height: 75
   isLeftClickDragging: 0
@@ -283,6 +301,8 @@ MonoBehaviour:
   roomNodeTypeList: {fileID: 11400000, guid: 00b8f90c2eae28d4394bf3daddd7bd91, type: 2}
   rect:
     serializedVersion: 2
+    x: -234
+    y: 287
     width: 160
     height: 75
   isLeftClickDragging: 0
@@ -309,6 +329,8 @@ MonoBehaviour:
   roomNodeTypeList: {fileID: 11400000, guid: 00b8f90c2eae28d4394bf3daddd7bd91, type: 2}
   rect:
     serializedVersion: 2
+    x: 573
+    y: 115
     width: 160
     height: 75
   isLeftClickDragging: 0
@@ -368,6 +390,8 @@ MonoBehaviour:
   roomNodeTypeList: {fileID: 11400000, guid: 00b8f90c2eae28d4394bf3daddd7bd91, type: 2}
   rect:
     serializedVersion: 2
+    x: 575
+    y: 296
     width: 160
     height: 75
   isLeftClickDragging: 0
@@ -394,6 +418,8 @@ MonoBehaviour:
   roomNodeTypeList: {fileID: 11400000, guid: 00b8f90c2eae28d4394bf3daddd7bd91, type: 2}
   rect:
     serializedVersion: 2
+    x: -29
+    y: 204
     width: 160
     height: 75
   isLeftClickDragging: 0
@@ -420,6 +446,8 @@ MonoBehaviour:
   roomNodeTypeList: {fileID: 11400000, guid: 00b8f90c2eae28d4394bf3daddd7bd91, type: 2}
   rect:
     serializedVersion: 2
+    x: 172
+    y: 292
     width: 160
     height: 75
   isLeftClickDragging: 0
@@ -446,6 +474,8 @@ MonoBehaviour:
   roomNodeTypeList: {fileID: 11400000, guid: 00b8f90c2eae28d4394bf3daddd7bd91, type: 2}
   rect:
     serializedVersion: 2
+    x: 572
+    y: 386
     width: 160
     height: 75
   isLeftClickDragging: 0
@@ -471,6 +501,8 @@ MonoBehaviour:
   roomNodeTypeList: {fileID: 11400000, guid: 00b8f90c2eae28d4394bf3daddd7bd91, type: 2}
   rect:
     serializedVersion: 2
+    x: 378
+    y: 111
     width: 160
     height: 75
   isLeftClickDragging: 0

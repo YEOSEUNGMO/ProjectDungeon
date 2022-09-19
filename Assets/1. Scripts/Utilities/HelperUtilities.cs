@@ -4,9 +4,9 @@ using UnityEngine;
 
 public static class HelperUtilities
 {
-    public static bool ValidateCheckEmptyString(Object thisObject,string fieldName,string stringToCheck)
+    public static bool ValidateCheckEmptyString(Object thisObject, string fieldName, string stringToCheck)
     {
-        if(stringToCheck=="")
+        if (stringToCheck == "")
         {
             Debug.Log(fieldName + "is empty and must contain a value in object " + thisObject.name.ToString());
             return true;
@@ -25,9 +25,15 @@ public static class HelperUtilities
     {
         bool error = false;
         int count = 0;
-        foreach(var item in enumerableObjectToCheck)
+
+        if (enumerableObjectToCheck == null)
         {
-            if(item==null)
+            Debug.Log(fieldName + "is null in object " + thisObject.name.ToString());
+            return true;
+        }
+        foreach (var item in enumerableObjectToCheck)
+        {
+            if (item == null)
             {
                 Debug.Log(fieldName + " has null values in object " + thisObject.name.ToString());
                 error = true;
@@ -38,7 +44,7 @@ public static class HelperUtilities
             }
         }
 
-        if(count == 0)
+        if (count == 0)
         {
             Debug.Log(fieldName + " has no values in object " + thisObject.name.ToString());
             error = true;
