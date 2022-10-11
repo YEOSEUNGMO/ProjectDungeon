@@ -62,6 +62,7 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
                 ClearDungeon();
 
                 dungeonRebuildAttemptsForNOdeGraph++;
+                // Debug.Log(dungeonRebuildAttemptsForNOdeGraph);
 
                 //Attempt To Build A Random Dungeon For The Selected room node graph
                 dungeonBuildSuccessful = AttemptToBuildRandomDungeon(roomNodeGraph);
@@ -548,7 +549,29 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
     /// </summary>
     private void InstantiateRoomGamebojects()
     {
-        
+        Debug.Log("!!");
+        // Debug.Log(dungeonBuilderRoomDictionary.Count);
+        //Iterate through all dungeon rooms.
+        // foreach (KeyValuePair<string, Room> keyValuePair in dungeonBuilderRoomDictionary)
+        // {
+        //     Room room = keyValuePair.Value;
+
+        //     // Calculate room position (remeber the room instantiation position nneds to be adjusted by the room template lower bounds)
+        //     Vector3 roomPosition = new Vector3(room.lowerBounds.x - room.templateLowerBounds.x, room.lowerBounds.y - room.templateLowerBounds.y, 0f);
+
+        //     //Instantiate room
+        //     GameObject roomGameobject = Instantiate(room.prefab, roomPosition, Quaternion.identity, transform);
+
+        //     // Get instantiated room component from instatiated prefab.
+        //     InstantiatedRoom instantiatedRoom = roomGameobject.GetComponentInChildren<InstantiatedRoom>();
+
+        //     instantiatedRoom.room = room;
+
+        //     // Initialise The Instatiated Room
+        //     instantiatedRoom.Initialise(roomGameobject);
+
+        //     room.instantiatedRoom = instantiatedRoom;
+        // }
     }
 
     /// <summary>
